@@ -80,7 +80,19 @@ class Module {
      * @param {string} code 代码字符串
      */
     $runInThisContext = (code) => {
+        const func = new Function('sandbox',`with(sandbox){${code}}`);
+        return function(sandbox) {
+            if(!sandbox ||typeof sandbox !== 'object'){
+                throw Error('sandbox parameter must be an object.');
+            }
 
+            //代理
+            const proxiedObject = new Proxy(sandbox,{});
+
+            return func(proxiedObject);
+
+
+        }
     }
 
     /**
